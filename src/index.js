@@ -1,12 +1,26 @@
-import express from 'express';
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { gql } from "graphql-tag";
+const typeDefs=gql`
+  type Query {
+    hello: String
+  }
+`;
 
-const app=express();
-const port=3000;
+const resolvers={
+    Query: {
+        hello: () => 'Hello, world!',
+    },
+};
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
+// Create the Apollo Server
+const server=new ApolloServer({
+    typeDefs,
+    resolvers,
 });
 
-app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
+startStandaloneServer(server, {
+    listen: { port: 4000 },
+}).then(({ url }) => {
+    console.log(`🚀 Server ready at ${url}`);
 });
